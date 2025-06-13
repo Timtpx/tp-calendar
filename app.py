@@ -30,6 +30,8 @@ def calculate_due_date(code):
         return "Bereithalten zur Prüfung"
     elif code == "30_days_after_request":
         return "30 Tage nach Anfrage"
+    elif code == "none":
+        return "Nicht erforderlich"
     else:
         return "Unbekannt"
 
@@ -38,41 +40,41 @@ st.sidebar.header("📤 Länderliste hochladen")
 uploaded_file = st.sidebar.file_uploader("CSV mit ISO-Ländercodes (z. B. DE, FR, CN)", type=["csv"])
 view_mode = st.sidebar.radio("Ansicht wählen", ["Tabelle", "Zeitstrahl"])
 
-# --- Fristendatenbank mit 34 Ländern ---
+# --- Neue Fristendatenbank basierend auf Excel-Datei ---
 fristen_data = [
-    {"code": "BE", "country": "Belgium", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "CH", "country": "Switzerland", "local_file": "available_at_tax_audit", "master_file": "upon_request"},
-    {"code": "CZ", "country": "Czech Republic", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "FR", "country": "France", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
-    {"code": "IT", "country": "Italy", "local_file": "available_at_tax_audit", "master_file": "30_days_after_request"},
-    {"code": "NL", "country": "Netherlands", "local_file": "6_months_after_fye", "master_file": "6_months_after_local_file"},
-    {"code": "PL", "country": "Poland", "local_file": "3_months_after_fye", "master_file": "upon_request"},
-    {"code": "SE", "country": "Sweden", "local_file": "6_months_after_fye", "master_file": "upon_request"},
-    {"code": "SK", "country": "Slovakia", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "ES", "country": "Spain", "local_file": "with_tax_return", "master_file": "6_months_after_fye"},
-    {"code": "GB", "country": "United Kingdom", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "HU", "country": "Hungary", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
-    {"code": "RU", "country": "Russia", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "TR", "country": "Türkiye", "local_file": "with_tax_return", "master_file": "upon_request"},
-    {"code": "US", "country": "United States", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "CA", "country": "Canada", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "MX", "country": "Mexico", "local_file": "3_months_after_fye", "master_file": "3_months_after_fye"},
-    {"code": "CL", "country": "Chile", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "AR", "country": "Argentina", "local_file": "5_months_after_fye", "master_file": "12_months_after_fye"},
-    {"code": "CO", "country": "Colombia", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
-    {"code": "SG", "country": "Singapore", "local_file": "with_tax_return", "master_file": "upon_request"},
-    {"code": "TH", "country": "Thailand", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "JP", "country": "Japan", "local_file": "3_months_after_fye", "master_file": "3_months_after_fye"},
-    {"code": "KR", "country": "South Korea", "local_file": "3_months_after_fye", "master_file": "3_months_after_fye"},
-    {"code": "CN", "country": "China", "local_file": "6_months_after_fye", "master_file": "with_local_file"},
-    {"code": "MY", "country": "Malaysia", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "TW", "country": "Taiwan", "local_file": "with_tax_return", "master_file": "with_local_file"},
-    {"code": "FI", "country": "Finland", "local_file": "upon_request", "master_file": "upon_request"},
-    {"code": "BR", "country": "Brazil", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "AR", "country": "Argentina", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
     {"code": "AU", "country": "Australia", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "BE", "country": "Belgium", "local_file": "none", "master_file": "6_months_after_local_file"},
+    {"code": "BR", "country": "Brazil", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "CA", "country": "Canada", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "CL", "country": "Chile", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "CN", "country": "China", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "CO", "country": "Colombia", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "CZ", "country": "Czech Republic", "local_file": "none", "master_file": "upon_request"},
+    {"code": "FI", "country": "Finland", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "FR", "country": "France", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "HU", "country": "Hungary", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "IT", "country": "Italy", "local_file": "with_tax_return", "master_file": "30_days_after_request"},
+    {"code": "JP", "country": "Japan", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "KR", "country": "South Korea", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "MY", "country": "Malaysia", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "MX", "country": "Mexico", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "NL", "country": "Netherlands", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
     {"code": "NZ", "country": "New Zealand", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
-    {"code": "ZA", "country": "South Africa", "local_file": "upon_request", "master_file": "upon_request"},
+    {"code": "PL", "country": "Poland", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "RU", "country": "Russia", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "SE", "country": "Sweden", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "SG", "country": "Singapore", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "SK", "country": "Slovakia", "local_file": "none", "master_file": "upon_request"},
+    {"code": "ES", "country": "Spain", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "CH", "country": "Switzerland", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "TW", "country": "Taiwan", "local_file": "with_tax_return", "master_file": "with_local_file"},
+    {"code": "TH", "country": "Thailand", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "TR", "country": "Türkiye", "local_file": "with_tax_return", "master_file": "upon_request"},
     {"code": "AE", "country": "United Arab Emirates", "local_file": "with_tax_return", "master_file": "6_months_after_local_file"},
+    {"code": "GB", "country": "United Kingdom", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "US", "country": "United States", "local_file": "with_tax_return", "master_file": "upon_request"},
+    {"code": "ZA", "country": "South Africa", "local_file": "with_tax_return", "master_file": "upon_request"},
 ]
 
 # --- Verarbeitung & Anzeige ---
